@@ -1,84 +1,146 @@
-Slip 18
-Q1) Graph Coloring
-#include<stdio.h>
 
-int m,x[10];
+                 SLIP 18
 
-void nextvalue(int k,int n,int graph[10][10])
-{
-    int j;
 
-    while(1)
-    {
-        x[k]=(x[k]+1)%(m+1);
 
-        if(x[k]==0)
-            return;
+Q.1) Write a program to implement Graph Coloring Algorithm
 
-        for(j=1;j<=n;j++)
-        {
-            if(graph[k][j]!=0 && x[k]==x[j])
-                break;
-        }
 
-        if(j==n+1)
-            return;
+#include <stdio.h>
+#define MAX 100
+
+int graph[MAX][MAX];
+int color[MAX];
+int V, m;
+ 
+int isSafe(int v, int c) {
+    for (int i = 0; i < V; i++) {
+        if (graph[v][i] == 1 && color[i] == c)
+            return 0;
     }
+    return 1;
+}
+ 
+int solve(int v) {
+    if (v == V)
+        return 1;
+
+    for (int c = 1; c <= m; c++) {
+        if (isSafe(v, c)) {
+            color[v] = c;
+
+            if (solve(v + 1))
+                return 1;
+
+            color[v] = 0; 
+        }
+    }
+    return 0;
 }
 
-void mcoloring(int k,int n,int graph[10][10])
-{
-    int i;
-
-    while(1)
-    {
-        nextvalue(k,n,graph);
-
-        if(x[k]==0)
-            return;
-
-        if(k==n)
-        {
-            for(i=1;i<=n;i++)
-                printf("%d ",x[i]);
-
-            printf("\n");
-        }
-        else
-            mcoloring(k+1,n,graph);
-    }
-}
-
-int main()
-{
-    int graph[10][10],i,j,n;
-
-    printf("Enter vertices:");
-    scanf("%d",&n);
+int main() {
+    printf("Enter number of vertices: ");
+    scanf("%d", &V);
 
     printf("Enter adjacency matrix:\n");
-
-    for(i=1;i<=n;i++)
-    {
-        for(j=1;j<=n;j++)
-            scanf("%d",&graph[i][j]);
+    for (int i = 0; i < V; i++) {
+        for (int j = 0; j < V; j++) {
+            scanf("%d", &graph[i][j]);
+        }
     }
 
-    printf("Enter number of colors:");
-    scanf("%d",&m);
+    printf("Enter number of colors: ");
+    scanf("%d", &m);
+ 
+    for (int i = 0; i < V; i++)
+        color[i] = 0;
 
-    mcoloring(1,n,graph);
+    if (solve(0)) {
+        printf("Solution exists:\n");
+        for (int i = 0; i < V; i++) {
+            printf("Vertex %d -> Color %d\n", i, color[i]);
+        }
+    } else {
+        printf("No solution exists\n");
+    }
 
     return 0;
 }
-Q2) Live Node, E Node, Dead Node
-#include<stdio.h>
 
-int main()
-{
-    printf("Live Node : Node that generates child nodes\n");
-    printf("E Node : Node currently expanded\n");
-    printf("Dead Node : Node that cannot generate further child nodes\n");
+
+
+Q.2) Write a program to find out live node, E node and dead node from a given graph.
+
+
+
+#include <stdio.h>
+#define MAX 10
+
+int graph[MAX][MAX], visited[MAX];
+int queue[MAX];
+int front = 0, rear = -1;
+ 
+void enqueue(int x) {
+    queue[++rear] = x;
+}
+ 
+int dequeue() {
+    return queue[front++];
+}
+ 
+int isEmpty() {
+    return front > rear;
+}
+
+int main() {
+    int V, start;
+
+    printf("Enter number of vertices: ");
+    scanf("%d", &V);
+
+    printf("Enter adjacency matrix:\n");
+    for (int i = 0; i < V; i++)
+        for (int j = 0; j < V; j++)
+            scanf("%d", &graph[i][j]);
+
+    printf("Enter starting node: ");
+    scanf("%d", &start);
+
+    // Initialize
+    for (int i = 0; i < V; i++)
+        visited[i] = 0;
+
+    enqueue(start);
+    visited[start] = 1;
+
+    printf("\nTraversal with Node Types:\n");
+
+    while (!isEmpty()) {
+        int node = dequeue();
+ 
+        printf("E-node (Expanding): %d\n", node);
+
+        int isLeaf = 1;
+
+        for (int i = 0; i < V; i++) {
+            if (graph[node][i] == 1 && !visited[i]) {
+                enqueue(i);
+                visited[i] = 1;
+ 
+                printf("Live node: %d\n", i);
+                isLeaf = 0;
+            }
+        }
+ 
+        if (isLeaf) {
+            printf("Dead node: %d\n", node);
+        }
+
+        printf("\n");
+    }
 
     return 0;
 }
+
+
+____________________________________________________________________________
