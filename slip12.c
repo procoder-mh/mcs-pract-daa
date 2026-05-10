@@ -1,79 +1,132 @@
-Slip 12
-Q1) BFS
-#include<stdio.h>
+SLIP 12
 
-int main()
-{
-    int a[10][10],visited[10]={0},queue[10];
-    int i,j,n,v,front=0,rear=-1;
 
-    printf("Enter number of vertices:");
-    scanf("%d",&n);
+Q.1) Write a program to implement BFS (Breadth First Search) and determine the time
+complexity for the same.
 
-    printf("Enter adjacency matrix:\n");
 
-    for(i=0;i<n;i++)
-    {
-        for(j=0;j<n;j++)
-            scanf("%d",&a[i][j]);
-    }
+#include <stdio.h>
 
-    printf("Enter starting vertex:");
-    scanf("%d",&v);
+#define MAX 100
 
-    queue[++rear]=v;
-    visited[v]=1;
+int queue[MAX], front = 0, rear = -1;
+int visited[MAX];
+ 
+void enqueue(int v) {
+    queue[++rear] = v;
+}
+ 
+int dequeue() {
+    return queue[front++];
+}
+ 
+int isEmpty() {
+    return front > rear;
+}
+ 
+void BFS(int graph[MAX][MAX], int V, int start) {
+    enqueue(start);
+    visited[start] = 1;
 
-    while(front<=rear)
-    {
-        v=queue[front++];
+    while (!isEmpty()) {
+        int v = dequeue();
+        printf("%d ", v);
 
-        printf("%d ",v);
-
-        for(i=0;i<n;i++)
-        {
-            if(a[v][i]==1 && visited[i]==0)
-            {
-                queue[++rear]=i;
-                visited[i]=1;
+        for (int i = 0; i < V; i++) {
+            if (graph[v][i] == 1 && !visited[i]) {
+                enqueue(i);
+                visited[i] = 1;
             }
         }
     }
-
-    return 0;
 }
-Q2) Selection Sort
-#include<stdio.h>
 
-int main()
-{
-    int a[100],n,i,j,min,temp;
+int main() {
+    int V, start;
 
-    scanf("%d",&n);
+    printf("Enter number of vertices: ");
+    scanf("%d", &V);
 
-    for(i=0;i<n;i++)
-        scanf("%d",&a[i]);
+    int graph[MAX][MAX];
 
-    for(i=0;i<n-1;i++)
-    {
-        min=i;
-
-        for(j=i+1;j<n;j++)
-        {
-            if(a[j]<a[min])
-                min=j;
+    printf("Enter adjacency matrix:\n");
+    for (int i = 0; i < V; i++) {
+        for (int j = 0; j < V; j++) {
+            scanf("%d", &graph[i][j]);
         }
-
-        temp=a[i];
-        a[i]=a[min];
-        a[min]=temp;
     }
 
-    printf("Sorted Array:\n");
+    printf("Enter starting vertex: ");
+    scanf("%d", &start);
+ 
+    for (int i = 0; i < V; i++)
+        visited[i] = 0;
 
-    for(i=0;i<n;i++)
-        printf("%d ",a[i]);
+    printf("BFS Traversal: ");
+    BFS(graph, V, start);
 
     return 0;
 }
+
+
+
+Q.2) Write a program to sort a given set of elements using the Selection sort method and
+determine the time required to sort the elements.
+
+ 
+#include <stdio.h>
+#include <time.h>
+
+// Selection Sort function
+void selectionSort(int arr[], int n) {
+    int i, j, min_idx, temp;
+
+    for (i = 0; i < n - 1; i++) {
+        min_idx = i;
+
+        for (j = i + 1; j < n; j++) {
+            if (arr[j] < arr[min_idx]) {
+                min_idx = j;
+            }
+        }
+ 
+        temp = arr[i];
+        arr[i] = arr[min_idx];
+        arr[min_idx] = temp;
+    }
+}
+
+int main() {
+    int n;
+
+    printf("Enter number of elements: ");
+    scanf("%d", &n);
+
+    int arr[n];
+
+    printf("Enter elements:\n");
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &arr[i]);
+    }
+
+    clock_t start, end;
+
+    start = clock();
+    selectionSort(arr, n);
+    end = clock();
+
+    printf("\nSorted array:\n");
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+
+    double time_taken = (double)(end - start) / CLOCKS_PER_SEC;
+
+    printf("\nTime taken: %f seconds\n", time_taken);
+
+    return 0;
+}
+
+
+______________________________________________________________________________
 
