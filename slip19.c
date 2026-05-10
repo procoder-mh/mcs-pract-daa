@@ -1,127 +1,154 @@
-Slip 19
-Q1) Hamiltonian Cycle
-#include<stdio.h>
+SLIP 19
 
-int x[10];
 
-int place(int k,int i,int graph[10][10])
-{
-    int j;
 
-    if(graph[x[k-1]][i]==0)
+Q.1) Write a program to determine if a given graph is a Hamiltonian cycle or not.
+
+
+#include <stdio.h>
+#define MAX 100
+
+int graph[MAX][MAX];
+int path[MAX];
+int V;
+ 
+int isSafe(int v, int pos) {
+    
+    if (graph[path[pos - 1]][v] == 0)
         return 0;
-
-    for(j=1;j<k;j++)
-    {
-        if(x[j]==i)
+ 
+    for (int i = 0; i < pos; i++) {
+        if (path[i] == v)
             return 0;
     }
 
     return 1;
 }
+ 
+int hamCycleUtil(int pos) {
+   
+    if (pos == V) {
+   
+        return graph[path[pos - 1]][path[0]] == 1;
+    }
+ 
+    for (int v = 1; v < V; v++) {
+        if (isSafe(v, pos)) {
+            path[pos] = v;
 
-void hamiltonian(int k,int n,int graph[10][10])
-{
-    int i,j;
+            if (hamCycleUtil(pos + 1))
+                return 1;
 
-    while(1)
-    {
-        x[k]=(x[k]+1)%(n+1);
-
-        if(x[k]==0)
-            return;
-
-        if(place(k,x[k],graph))
-        {
-            if(k==n)
-            {
-                if(graph[x[n]][x[1]]!=0)
-                {
-                    for(j=1;j<=n;j++)
-                        printf("%d ",x[j]);
-
-                    printf("%d",x[1]);
-                    printf("\n");
-                }
-            }
-            else
-                hamiltonian(k+1,n,graph);
+            path[pos] = -1; 
         }
     }
-}
-
-int main()
-{
-    int graph[10][10],i,j,n;
-
-    scanf("%d",&n);
-
-    for(i=1;i<=n;i++)
-    {
-        for(j=1;j<=n;j++)
-            scanf("%d",&graph[i][j]);
-    }
-
-    x[1]=1;
-
-    hamiltonian(2,n,graph);
 
     return 0;
 }
-Q2) 4 Queens Board Configuration
-#include<stdio.h>
 
-int x[10];
+void hamCycle() {
+    for (int i = 0; i < V; i++)
+        path[i] = -1;
 
-int place(int k,int i)
-{
-    int j;
+    path[0] = 0;  
 
-    for(j=1;j<k;j++)
-    {
-        if(x[j]==i || abs(x[j]-i)==abs(j-k))
-            return 0;
+    if (!hamCycleUtil(1)) {
+        printf("No Hamiltonian Cycle exists\n");
+        return;
     }
+
+    printf("Hamiltonian Cycle:\n");
+    for (int i = 0; i < V; i++)
+        printf("%d ", path[i]);
+
+    printf("%d\n", path[0]); 
+}
+
+int main() {
+    printf("Enter number of vertices: ");
+    scanf("%d", &V);
+
+    printf("Enter adjacency matrix:\n");
+    for (int i = 0; i < V; i++) {
+        for (int j = 0; j < V; j++) {
+            scanf("%d", &graph[i][j]);
+        }
+    }
+
+    hamCycle();
+
+    return 0;
+}
+
+
+
+Q.2) Write a program to show board configuration of 4 queens’ problem.
+
+
+
+#include <stdio.h>
+#define N 4
+
+int board[N][N];
+ 
+int isSafe(int row, int col) {
+    int i, j;
+ 
+    for (i = 0; i < col; i++)
+        if (board[row][i])
+            return 0;
+ 
+    for (i = row, j = col; i >= 0 && j >= 0; i--, j--)
+        if (board[i][j])
+            return 0;
+ 
+    for (i = row, j = col; i < N && j >= 0; i++, j--)
+        if (board[i][j])
+            return 0;
 
     return 1;
 }
+ 
+int solve(int col) {
+    if (col >= N)
+        return 1;
 
-void queen(int k,int n)
-{
-    int i,j;
+    for (int i = 0; i < N; i++) {
+        if (isSafe(i, col)) {
+            board[i][col] = 1;
 
-    for(i=1;i<=n;i++)
-    {
-        if(place(k,i))
-        {
-            x[k]=i;
+            if (solve(col + 1))
+                return 1;
 
-            if(k==n)
-            {
-                for(i=1;i<=n;i++)
-                {
-                    for(j=1;j<=n;j++)
-                    {
-                        if(x[i]==j)
-                            printf("Q ");
-                        else
-                            printf("* ");
-                    }
-
-                    printf("\n");
-                }
-
-                printf("\n");
-            }
-            else
-                queen(k+1,n);
+            board[i][col] = 0;  
         }
+    }
+    return 0;
+}
+ 
+void printBoard() {
+    printf("Board Configuration (1 = Queen, 0 = Empty):\n");
+    for (int i = 0; i < N; i++) {
+        for (int j = 0; j < N; j++) {
+            printf("%d ", board[i][j]);
+        }
+        printf("\n");
     }
 }
 
-int main()
-{
-    queen(1,4);
+int main() {
+     
+    for (int i = 0; i < N; i++)
+        for (int j = 0; j < N; j++)
+            board[i][j] = 0;
+
+    if (solve(0)) {
+        printBoard();
+    } else {
+        printf("No solution exists\n");
+    }
 
     return 0;
 }
+
+_____________________________________________________________________________-
