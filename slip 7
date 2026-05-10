@@ -1,0 +1,124 @@
+Slip 7
+Q1) Dijkstra Algorithm
+#include<stdio.h>
+
+int main()
+{
+    int cost[10][10],dist[10],visited[10];
+    int n,i,j,count,mindistance,nextnode,start;
+
+    printf("Enter number of vertices:");
+    scanf("%d",&n);
+
+    printf("Enter cost matrix:\n");
+
+    for(i=0;i<n;i++)
+    {
+        for(j=0;j<n;j++)
+        {
+            scanf("%d",&cost[i][j]);
+
+            if(cost[i][j]==0)
+                cost[i][j]=999;
+        }
+    }
+
+    printf("Enter starting node:");
+    scanf("%d",&start);
+
+    for(i=0;i<n;i++)
+    {
+        dist[i]=cost[start][i];
+        visited[i]=0;
+    }
+
+    dist[start]=0;
+    visited[start]=1;
+    count=1;
+
+    while(count<n-1)
+    {
+        mindistance=999;
+
+        for(i=0;i<n;i++)
+        {
+            if(dist[i]<mindistance && !visited[i])
+            {
+                mindistance=dist[i];
+                nextnode=i;
+            }
+        }
+
+        visited[nextnode]=1;
+
+        for(i=0;i<n;i++)
+        {
+            if(!visited[i])
+            {
+                if(mindistance+cost[nextnode][i]<dist[i])
+                    dist[i]=mindistance+cost[nextnode][i];
+            }
+        }
+
+        count++;
+    }
+
+    printf("Shortest distances:\n");
+
+    for(i=0;i<n;i++)
+        printf("%d -> %d = %d\n",start,i,dist[i]);
+
+    return 0;
+}
+Q2) Topological Sort
+#include<stdio.h>
+
+int main()
+{
+    int n,i,j,a[10][10],indeg[10]={0},flag[10]={0},count=0;
+
+    printf("Enter number of vertices:");
+    scanf("%d",&n);
+
+    printf("Enter adjacency matrix:\n");
+
+    for(i=0;i<n;i++)
+    {
+        for(j=0;j<n;j++)
+        {
+            scanf("%d",&a[i][j]);
+        }
+    }
+
+    for(i=0;i<n;i++)
+    {
+        for(j=0;j<n;j++)
+        {
+            indeg[i]+=a[j][i];
+        }
+    }
+
+    printf("Topological order:\n");
+
+    while(count<n)
+    {
+        for(i=0;i<n;i++)
+        {
+            if(indeg[i]==0 && flag[i]==0)
+            {
+                printf("%d ",i);
+                flag[i]=1;
+            }
+
+            for(j=0;j<n;j++)
+            {
+                if(a[i][j]==1)
+                    indeg[j]--;
+            }
+        }
+
+        count++;
+    }
+
+    return 0;
+}
