@@ -1,94 +1,133 @@
-Slip 8
-Q1) Fractional Knapsack
-#include<stdio.h>
+SLIP 8
 
-int main()
-{
-    int i,j,n,temp;
-    float profit[20],weight[20],ratio[20],capacity,total=0,x[20];
 
-    scanf("%d",&n);
+Q.1) Write a program to implement Fractional Knapsack problems using Greedy Method
 
-    for(i=0;i<n;i++)
-    {
-        scanf("%f%f",&profit[i],&weight[i]);
-        ratio[i]=profit[i]/weight[i];
-    }
 
-    for(i=0;i<n;i++)
-    {
-        for(j=i+1;j<n;j++)
-        {
-            if(ratio[i]<ratio[j])
-            {
-                temp=ratio[i];
-                ratio[i]=ratio[j];
-                ratio[j]=temp;
+#include <stdio.h>
+
+struct Item {
+    int value, weight;
+    float ratio;
+};
+ 
+void sort(struct Item arr[], int n) {
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = i + 1; j < n; j++) {
+            if (arr[i].ratio < arr[j].ratio) {
+                struct Item temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
             }
         }
     }
-
-    scanf("%f",&capacity);
-
-    for(i=0;i<n;i++)
-    {
-        if(weight[i]>capacity)
-            break;
-
-        x[i]=1.0;
-        total+=profit[i];
-        capacity-=weight[i];
-    }
-
-    if(i<n)
-    {
-        x[i]=capacity/weight[i];
-        total+=x[i]*profit[i];
-    }
-
-    printf("Maximum Profit=%f",total);
-
-    return 0;
 }
-Q2) Traveling Salesman Problem
-#include<stdio.h>
 
-int cost[10][10],visited[10],n;
+int main() {
+    int n, capacity;
 
-void tsp(int city)
-{
-    int i;
+    printf("Enter number of items: ");
+    scanf("%d", &n);
 
-    printf("%d --> ",city+1);
-    visited[city]=1;
+    struct Item arr[n];
 
-    for(i=0;i<n;i++)
-    {
-        if(cost[city][i]!=0 && visited[i]==0)
-        {
-            tsp(i);
+    printf("Enter values:\n");
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &arr[i].value);
+    }
+
+    printf("Enter weights:\n");
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &arr[i].weight);
+        arr[i].ratio = (float)arr[i].value / arr[i].weight;
+    }
+
+    printf("Enter knapsack capacity: ");
+    scanf("%d", &capacity);
+
+    sort(arr, n);
+
+    float totalValue = 0.0;
+
+    for (int i = 0; i < n; i++) {
+        if (capacity >= arr[i].weight) {
+            capacity -= arr[i].weight;
+            totalValue += arr[i].value;
+        } else {
+            totalValue += arr[i].ratio * capacity;
             break;
         }
     }
-}
 
-int main()
-{
-    int i,j;
-
-    printf("Enter number of cities:");
-    scanf("%d",&n);
-
-    printf("Enter cost matrix:\n");
-
-    for(i=0;i<n;i++)
-    {
-        for(j=0;j<n;j++)
-            scanf("%d",&cost[i][j]);
-    }
-
-    tsp(0);
+    printf("Maximum value in knapsack = %.2f\n", totalValue);
 
     return 0;
 }
 
+
+
+Q.2) Write Program to implement Traveling Salesman Problem using nearest neighbor
+algorithm
+
+
+#include <stdio.h>
+#include <limits.h>
+
+#define MAX 100
+
+int main() {
+    int n;
+
+    printf("Enter number of cities: ");
+    scanf("%d", &n);
+
+    int cost[MAX][MAX];
+
+    printf("Enter cost matrix:\n");
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            scanf("%d", &cost[i][j]);
+        }
+    }
+
+    int visited[MAX] = {0};
+    int path[MAX];
+    int totalCost = 0;
+
+    int current = 0;    
+    visited[current] = 1;
+    path[0] = current;
+
+    printf("\nPath: %d", current);
+
+    for (int count = 1; count < n; count++) {
+        int next = -1;
+        int min = INT_MAX;
+
+        for (int i = 0; i < n; i++) {
+            if (!visited[i] && cost[current][i] != 0 && cost[current][i] < min) {
+                min = cost[current][i];
+                next = i;
+            }
+        }
+
+        if (next != -1) {
+            visited[next] = 1;
+            path[count] = next;
+            totalCost += min;
+            current = next;
+
+            printf(" -> %d", next);
+        }
+    }
+ 
+    totalCost += cost[current][0];
+    printf(" -> %d", 0);
+
+    printf("\nTotal Cost = %d\n", totalCost);
+
+    return 0;
+}
+
+
+_________________________________________________________________________________________
