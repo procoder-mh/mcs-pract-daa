@@ -1,124 +1,147 @@
-Slip 7
-Q1) Dijkstra Algorithm
-#include<stdio.h>
+      SLIP 7
 
-int main()
-{
-    int cost[10][10],dist[10],visited[10];
-    int n,i,j,count,mindistance,nextnode,start;
 
-    printf("Enter number of vertices:");
-    scanf("%d",&n);
+Q-1) Write a program for the Implementation of Dijkstra’s algorithm to find shortest path to
+other vertices
 
-    printf("Enter cost matrix:\n");
 
-    for(i=0;i<n;i++)
-    {
-        for(j=0;j<n;j++)
-        {
-            scanf("%d",&cost[i][j]);
+#include <stdio.h>
+#include <limits.h>
 
-            if(cost[i][j]==0)
-                cost[i][j]=999;
+#define MAX 100
+ 
+int minDistance(int dist[], int visited[], int V) {
+    int min = INT_MAX, min_index = -1;
+
+    for (int i = 0; i < V; i++) {
+        if (!visited[i] && dist[i] <= min) {
+            min = dist[i];
+            min_index = i;
         }
     }
-
-    printf("Enter starting node:");
-    scanf("%d",&start);
-
-    for(i=0;i<n;i++)
-    {
-        dist[i]=cost[start][i];
-        visited[i]=0;
-    }
-
-    dist[start]=0;
-    visited[start]=1;
-    count=1;
-
-    while(count<n-1)
-    {
-        mindistance=999;
-
-        for(i=0;i<n;i++)
-        {
-            if(dist[i]<mindistance && !visited[i])
-            {
-                mindistance=dist[i];
-                nextnode=i;
-            }
-        }
-
-        visited[nextnode]=1;
-
-        for(i=0;i<n;i++)
-        {
-            if(!visited[i])
-            {
-                if(mindistance+cost[nextnode][i]<dist[i])
-                    dist[i]=mindistance+cost[nextnode][i];
-            }
-        }
-
-        count++;
-    }
-
-    printf("Shortest distances:\n");
-
-    for(i=0;i<n;i++)
-        printf("%d -> %d = %d\n",start,i,dist[i]);
-
-    return 0;
+    return min_index;
 }
-Q2) Topological Sort
-#include<stdio.h>
+ 
+void dijkstra(int graph[MAX][MAX], int V, int src) {
+    int dist[MAX];     
+    int visited[MAX];  
+ 
+    for (int i = 0; i < V; i++) {
+        dist[i] = INT_MAX;
+        visited[i] = 0;
+    }
 
-int main()
-{
-    int n,i,j,a[10][10],indeg[10]={0},flag[10]={0},count=0;
+    dist[src] = 0;
+ 
+    for (int count = 0; count < V - 1; count++) {
+        int u = minDistance(dist, visited, V);
+        visited[u] = 1;
 
-    printf("Enter number of vertices:");
-    scanf("%d",&n);
+        for (int v = 0; v < V; v++) {
+            if (!visited[v] && graph[u][v] &&
+                dist[u] != INT_MAX &&
+                dist[u] + graph[u][v] < dist[v]) {
+                
+                dist[v] = dist[u] + graph[u][v];
+            }
+        }
+    }
+ 
+    printf("\nVertex \t Distance from Source\n");
+    for (int i = 0; i < V; i++) {
+        printf("%d \t %d\n", i, dist[i]);
+    }
+}
+
+int main() {
+    int V, src;
+
+    printf("Enter number of vertices: ");
+    scanf("%d", &V);
+
+    int graph[MAX][MAX];
 
     printf("Enter adjacency matrix:\n");
-
-    for(i=0;i<n;i++)
-    {
-        for(j=0;j<n;j++)
-        {
-            scanf("%d",&a[i][j]);
+    for (int i = 0; i < V; i++) {
+        for (int j = 0; j < V; j++) {
+            scanf("%d", &graph[i][j]);
         }
     }
 
-    for(i=0;i<n;i++)
-    {
-        for(j=0;j<n;j++)
-        {
-            indeg[i]+=a[j][i];
+    printf("Enter source vertex: ");
+    scanf("%d", &src);
+
+    dijkstra(graph, V, src);
+
+    return 0;
+}
+
+
+
+Q.2) Write a program for finding Topological sorting for Directed Acyclic Graph (DAG)
+
+
+#include <stdio.h>
+
+#define MAX 100
+
+int main() {
+    int V, E;
+
+    printf("Enter number of vertices: ");
+    scanf("%d", &V);
+
+    printf("Enter number of edges: ");
+    scanf("%d", &E);
+
+    int adj[MAX][MAX] = {0};
+    int indegree[MAX] = {0};
+ 
+    printf("Enter edges (u v):\n");
+    for (int i = 0; i < E; i++) {
+        int u, v;
+        scanf("%d %d", &u, &v);
+        adj[u][v] = 1;
+        indegree[v]++;
+    }
+
+    int queue[MAX], front = 0, rear = -1;
+ 
+    for (int i = 0; i < V; i++) {
+        if (indegree[i] == 0) {
+            queue[++rear] = i;
         }
     }
 
-    printf("Topological order:\n");
+    int count = 0;
+    int topo[MAX];
 
-    while(count<n)
-    {
-        for(i=0;i<n;i++)
-        {
-            if(indeg[i]==0 && flag[i]==0)
-            {
-                printf("%d ",i);
-                flag[i]=1;
-            }
+    while (front <= rear) {
+        int u = queue[front++];
+        topo[count++] = u;
 
-            for(j=0;j<n;j++)
-            {
-                if(a[i][j]==1)
-                    indeg[j]--;
+        for (int v = 0; v < V; v++) {
+            if (adj[u][v]) {
+                indegree[v]--;
+                if (indegree[v] == 0) {
+                    queue[++rear] = v;
+                }
             }
         }
+    }
 
-        count++;
+    if (count != V) {
+        printf("Graph is not a DAG (cycle exists)\n");
+    } else {
+        printf("Topological Order:\n");
+        for (int i = 0; i < V; i++) {
+            printf("%d ", topo[i]);
+        }
+        printf("\n");
     }
 
     return 0;
 }
+
+
+_____________________________________________________________________________________
