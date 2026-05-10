@@ -1,53 +1,125 @@
-Slip 13
-Q1) Matrix Chain Multiplication
-#include<stdio.h>
+SLIP 13 
 
-int main()
-{
-    int p[10],m[10][10];
-    int i,j,k,n,L,q;
 
-    printf("Enter number of matrices:");
-    scanf("%d",&n);
+Q.1) Write a program to find minimum number of multiplications in Matrix Chain
+Multiplication.
 
-    printf("Enter dimensions:\n");
 
-    for(i=0;i<=n;i++)
-        scanf("%d",&p[i]);
+#include <stdio.h>
+#include <limits.h>
 
-    for(i=1;i<=n;i++)
-        m[i][i]=0;
+#define MAX 50
+ 
+int matrixChainOrder(int p[], int n) {
+    int m[MAX][MAX];
+ 
+    for (int i = 1; i < n; i++)
+        m[i][i] = 0;
+ 
+    for (int L = 2; L < n; L++) {
+        for (int i = 1; i < n - L + 1; i++) {
+            int j = i + L - 1;
+            m[i][j] = INT_MAX;
 
-    for(L=2;L<=n;L++)
-    {
-        for(i=1;i<=n-L+1;i++)
-        {
-            j=i+L-1;
-            m[i][j]=9999;
+            for (int k = i; k < j; k++) {
+                int q = m[i][k] + m[k + 1][j] + p[i - 1] * p[k] * p[j];
 
-            for(k=i;k<=j-1;k++)
-            {
-                q=m[i][k]+m[k+1][j]+p[i-1]*p[k]*p[j];
-
-                if(q<m[i][j])
-                    m[i][j]=q;
+                if (q < m[i][j])
+                    m[i][j] = q;
             }
         }
     }
 
-    printf("Minimum multiplications=%d",m[1][n]);
+    return m[1][n - 1];
+}
+
+int main() {
+    int n;
+
+    printf("Enter number of matrices: ");
+    scanf("%d", &n);
+
+    int p[n + 1];
+
+    printf("Enter dimensions array (size %d):\n", n + 1);
+    for (int i = 0; i <= n; i++) {
+        scanf("%d", &p[i]);
+    }
+
+    int result = matrixChainOrder(p, n + 1);
+
+    printf("Minimum number of multiplications = %d\n", result);
 
     return 0;
 }
-Q2) Optimal Binary Search Tree
-#include<stdio.h>
 
-int main()
-{
-    printf("Optimal Binary Search Tree\n");
 
-    printf("Best Case Complexity = O(log n)\n");
-    printf("Worst Case Complexity = O(n)\n");
+
+Q.2) Write a program to implement an optimal binary search tree and also calculate the
+best case and worst-case complexity.
+
+
+#include <stdio.h>
+#include <limits.h>
+
+#define MAX 50
+ 
+int sum(int freq[], int i, int j) {
+    int s = 0;
+    for (int k = i; k <= j; k++)
+        s += freq[k];
+    return s;
+}
+ 
+int optimalBST(int keys[], int freq[], int n) {
+    int cost[MAX][MAX];
+ 
+    for (int i = 0; i < n; i++)
+        cost[i][i] = freq[i];
+ 
+    for (int L = 2; L <= n; L++) {
+        for (int i = 0; i <= n - L; i++) {
+            int j = i + L - 1;
+            cost[i][j] = INT_MAX;
+
+            for (int r = i; r <= j; r++) {
+                int c = ((r > i) ? cost[i][r - 1] : 0) +
+                        ((r < j) ? cost[r + 1][j] : 0) +
+                        sum(freq, i, j);
+
+                if (c < cost[i][j])
+                    cost[i][j] = c;
+            }
+        }
+    }
+
+    return cost[0][n - 1];
+}
+
+int main() {
+    int n;
+
+    printf("Enter number of keys: ");
+    scanf("%d", &n);
+
+    int keys[n], freq[n];
+
+    printf("Enter keys:\n");
+    for (int i = 0; i < n; i++)
+        scanf("%d", &keys[i]);
+
+    printf("Enter frequencies:\n");
+    for (int i = 0; i < n; i++)
+        scanf("%d", &freq[i]);
+
+    int result = optimalBST(keys, freq, n);
+
+    printf("Cost of Optimal BST = %d\n", result);
 
     return 0;
 }
+
+
+___________________________________________________________________________
+
+ 
