@@ -1,23 +1,27 @@
+SLIP 2
 
-Slip 2
-Q1) Heap Sort
+
+
+Q.1) Write a program to sort n randomly generated elements using Heapsort method. 
+
+
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
-void heapify(int arr[], int n, int i)
-{
+void heapify(int arr[], int n, int i) {
     int largest = i;
     int left = 2*i + 1;
     int right = 2*i + 2;
     int temp;
 
-    if(left < n && arr[left] > arr[largest])
+    if (left < n && arr[left] > arr[largest])
         largest = left;
 
-    if(right < n && arr[right] > arr[largest])
+    if (right < n && arr[right] > arr[largest])
         largest = right;
 
-    if(largest != i)
-    {
+    if (largest != i) {
         temp = arr[i];
         arr[i] = arr[largest];
         arr[largest] = temp;
@@ -26,15 +30,13 @@ void heapify(int arr[], int n, int i)
     }
 }
 
-void heapSort(int arr[], int n)
-{
+void heapSort(int arr[], int n) {
     int i, temp;
 
-    for(i = n/2 - 1; i >= 0; i--)
+    for (i = n/2 - 1; i >= 0; i--)
         heapify(arr, n, i);
 
-    for(i = n - 1; i > 0; i--)
-    {
+    for (i = n-1; i > 0; i--) {
         temp = arr[0];
         arr[0] = arr[i];
         arr[i] = temp;
@@ -43,66 +45,94 @@ void heapSort(int arr[], int n)
     }
 }
 
-int main()
-{
+int main() {
     int n, i;
-
     printf("Enter number of elements: ");
     scanf("%d", &n);
 
     int arr[n];
+    srand(time(0));
 
-    printf("Enter elements:\n");
-    for(i = 0; i < n; i++)
-        scanf("%d", &arr[i]);
+    for (i = 0; i < n; i++) {
+        arr[i] = rand() % 1000;
+    }
 
+    clock_t start = clock();
     heapSort(arr, n);
+    clock_t end = clock();
 
-    printf("Sorted Array:\n");
-
-    for(i = 0; i < n; i++)
+    printf("Sorted array:\n");
+    for (i = 0; i < n; i++) {
         printf("%d ", arr[i]);
+    }
+
+    double time_taken = (double)(end - start) / CLOCKS_PER_SEC;
+    printf("\nTime taken: %f seconds\n", time_taken);
 
     return 0;
 }
-Q2) Strassen Matrix Multiplication
+
+
+
+Q.2) Write a program to implement Strassen’s Matrix multiplication
+
+
 #include <stdio.h>
 
-int main()
-{
-    int a[2][2], b[2][2], c[2][2];
-    int i, j, k;
+void add(int A[2][2], int B[2][2], int C[2][2]) {
+    for(int i=0;i<2;i++)
+        for(int j=0;j<2;j++)
+            C[i][j] = A[i][j] + B[i][j];
+}
 
-    printf("Enter first matrix:\n");
-    for(i=0;i<2;i++)
-        for(j=0;j<2;j++)
-            scanf("%d",&a[i][j]);
+void sub(int A[2][2], int B[2][2], int C[2][2]) {
+    for(int i=0;i<2;i++)
+        for(int j=0;j<2;j++)
+            C[i][j] = A[i][j] - B[i][j];
+}
 
-    printf("Enter second matrix:\n");
-    for(i=0;i<2;i++)
-        for(j=0;j<2;j++)
-            scanf("%d",&b[i][j]);
+void multiply(int A[2][2], int B[2][2], int C[2][2]) {
+    int M1, M2, M3, M4, M5, M6, M7;
 
-    for(i=0;i<2;i++)
-    {
-        for(j=0;j<2;j++)
-        {
-            c[i][j]=0;
+    M1 = (A[0][0]+A[1][1])*(B[0][0]+B[1][1]);
+    M2 = (A[1][0]+A[1][1])*B[0][0];
+    M3 = A[0][0]*(B[0][1]-B[1][1]);
+    M4 = A[1][1]*(B[1][0]-B[0][0]);
+    M5 = (A[0][0]+A[0][1])*B[1][1];
+    M6 = (A[1][0]-A[0][0])*(B[0][0]+B[0][1]);
+    M7 = (A[0][1]-A[1][1])*(B[1][0]+B[1][1]);
 
-            for(k=0;k<2;k++)
-                c[i][j]+=a[i][k]*b[k][j];
-        }
-    }
+    C[0][0] = M1 + M4 - M5 + M7;
+    C[0][1] = M3 + M5;
+    C[1][0] = M2 + M4;
+    C[1][1] = M1 - M2 + M3 + M6;
+}
+
+int main() {
+    int A[2][2], B[2][2], C[2][2];
+
+    printf("Enter Matrix A (2x2):\n");
+    for(int i=0;i<2;i++)
+        for(int j=0;j<2;j++)
+            scanf("%d",&A[i][j]);
+
+    printf("Enter Matrix B (2x2):\n");
+    for(int i=0;i<2;i++)
+        for(int j=0;j<2;j++)
+            scanf("%d",&B[i][j]);
+
+    multiply(A,B,C);
 
     printf("Result Matrix:\n");
-
-    for(i=0;i<2;i++)
-    {
-        for(j=0;j<2;j++)
-            printf("%d ",c[i][j]);
-
+    for(int i=0;i<2;i++) {
+        for(int j=0;j<2;j++)
+            printf("%d ",C[i][j]);
         printf("\n");
     }
 
     return 0;
 }
+
+
+____________________________________________________________________________________________
+
